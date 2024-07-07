@@ -13,15 +13,22 @@ fn random_int(ctx: &mut dyn Context, range: Range<isize>) -> Result<isize, Strin
 pub struct Opts {
     rolls: usize,
     count: usize,
+    unique: bool,
+    sort: bool,
 }
 
 impl Opts {
-    pub fn new(rolls: usize, count: usize) -> Self {
-        return Opts { rolls, count };
+    pub fn new(rolls: usize, count: usize, unique: bool, sort: bool) -> Self {
+        return Opts {
+            rolls,
+            count,
+            unique,
+            sort,
+        };
     }
 
     pub fn default() -> Self {
-        return Opts::new(1, 1);
+        return Opts::new(1, 1, false, false);
     }
 }
 
@@ -89,11 +96,27 @@ pub fn numbers(
 
     let mut values: Vec<f64> = Vec::with_capacity(opts.count);
 
-    for _ in 0..opts.count {
+    let mut index = 0;
+    while {
+        index += 1;
+        index <= opts.count
+    } {
         match number(ctx, min, max, precision, opts) {
-            Ok(value) => values.push(value),
+            Ok(value) => {
+                if opts.unique && values.contains(&value) {
+                    index -= 1;
+
+                    continue;
+                }
+
+                values.push(value)
+            }
             Err(error) => return Err(error),
         }
+    }
+
+    if opts.sort {
+        values.sort_by(|a, b| a.partial_cmp(b).unwrap());
     }
 
     return Ok(values);
@@ -145,7 +168,13 @@ mod tests {
     fn test_choose_number_one_pass() {
         let mut context_mock = ContextMock::new(vec![1]);
 
-        match number(&mut context_mock, 0.0, 2.0, 0, &Opts::new(1, 1)) {
+        match number(
+            &mut context_mock,
+            0.0,
+            2.0,
+            0,
+            &Opts::new(1, 1, false, false),
+        ) {
             Ok(value) => assert_eq!(value, 1.0, "expected: 1.0, got: {}", value),
             Err(error) => panic!("expected result, got: {}", error),
         }
@@ -155,7 +184,13 @@ mod tests {
     fn test_choose_number_multiple_pass() {
         let mut context_mock = ContextMock::new(vec![0, 2, 2]);
 
-        match number(&mut context_mock, 0.0, 2.0, 0, &Opts::new(3, 1)) {
+        match number(
+            &mut context_mock,
+            0.0,
+            2.0,
+            0,
+            &Opts::new(3, 1, false, false),
+        ) {
             Ok(value) => assert_eq!(value, 2.0, "expected: 2.0, got: {}", value),
             Err(error) => panic!("expected result, got: {}", error),
         }
@@ -165,7 +200,13 @@ mod tests {
     fn test_choose_number_precision() {
         let mut context_mock = ContextMock::new(vec![1]);
 
-        match number(&mut context_mock, 0.0, 2.0, 1, &Opts::new(1, 1)) {
+        match number(
+            &mut context_mock,
+            0.0,
+            2.0,
+            1,
+            &Opts::new(1, 1, false, false),
+        ) {
             Ok(value) => assert_eq!(value, 0.1, "expected: 0.1, got: {}", value),
             Err(error) => panic!("expected result, got: {}", error),
         }
@@ -175,7 +216,13 @@ mod tests {
     fn test_choose_numbers() {
         let mut context_mock = ContextMock::new(vec![0, 2, 1]);
 
-        match numbers(&mut context_mock, 0.0, 2.0, 0, &Opts::new(1, 3)) {
+        match numbers(
+            &mut context_mock,
+            0.0,
+            2.0,
+            0,
+            &Opts::new(1, 3, false, false),
+        ) {
             Ok(values) => assert_eq!(
                 values,
                 [0.0, 2.0, 1.0],
@@ -190,7 +237,11 @@ mod tests {
     fn test_choose_index() {
         let mut context_mock = ContextMock::new(vec![0]);
 
-        match index(&mut context_mock, vec![0, 1, 2], &Opts::new(1, 1)) {
+        match index(
+            &mut context_mock,
+            vec![0, 1, 2],
+            &Opts::new(1, 1, false, false),
+        ) {
             Ok(index) => assert_eq!(index, 0, "expected: 0, got: {}", index),
             Err(error) => panic!("expected result, got: {}", error),
         }
@@ -200,7 +251,11 @@ mod tests {
     fn test_choose_indexes() {
         let mut context_mock = ContextMock::new(vec![0, 2, 1]);
 
-        match indexes(&mut context_mock, vec![0, 1, 2], &Opts::new(1, 3)) {
+        match indexes(
+            &mut context_mock,
+            vec![0, 1, 2],
+            &Opts::new(1, 3, false, false),
+        ) {
             Ok(indexes) => assert_eq!(
                 indexes,
                 [0, 2, 1],

@@ -21,6 +21,12 @@ pub struct Args {
     )]
     count: usize,
 
+    #[clap(short = 'u', long = "unique", help = "If the values should be unique")]
+    unique: bool,
+
+    #[clap(short = 's', long = "sort", help = "If the values should be sorted")]
+    sort: bool,
+
     #[clap()]
     variants: Vec<String>,
 }
@@ -54,7 +60,7 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
         return Ok(());
     }
 
-    return match ctx.indexes(variants.clone(), rolls, args.count) {
+    return match ctx.indexes(variants.clone(), rolls, args.count, args.unique, args.sort) {
         Ok(indexes) => {
             let result = indexes
                 .iter()

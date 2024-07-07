@@ -30,6 +30,12 @@ pub struct Args {
     )]
     precision: i32,
 
+    #[clap(short = 'u', long = "unique", help = "If the values should be unique")]
+    unique: bool,
+
+    #[clap(short = 's', long = "sort", help = "If the values should be sorted")]
+    sort: bool,
+
     #[clap(required = true, help = "Minimum value")]
     min: f64,
 
@@ -61,7 +67,15 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
     let min = args.min;
     let max = args.max;
 
-    return match ctx.numbers(min, max, args.precision, rolls, args.count) {
+    return match ctx.numbers(
+        min,
+        max,
+        args.precision,
+        rolls,
+        args.count,
+        args.unique,
+        args.sort,
+    ) {
         Ok(numbers) => {
             print_numbers(ctx, numbers, args.precision);
             Ok(())

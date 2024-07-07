@@ -9,11 +9,15 @@ pub trait Context {
         precision: i32,
         rolls: usize,
         count: usize,
+        unique: bool,
+        sort: bool,
     ) -> Result<Vec<f64>, String>;
     fn indexes(
         &mut self,
         variants: Vec<String>,
         rolls: usize,
         count: usize,
+        unique: bool,
+        sort: bool,
     ) -> Result<Vec<usize>, String>;
 }

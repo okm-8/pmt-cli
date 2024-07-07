@@ -38,6 +38,8 @@ You can get help information for any command.
   --rolls <rolls> \           # how many times to roll the dice for each number
   --count <count> \           # how many numbers to get in the end
   --precision <precision> \   # how many decimal places to keep (be careful, it may cause performance issue)
+  --unique \                  # if the numbers should be unique
+  --sort \                    # if the numbers should be sorted
   {}
 ```
 
@@ -46,6 +48,8 @@ You can get help information for any command.
 ./bin/pmt choose variant \
     --rolls <rolls> \         # how many times to roll the dice for each value
     --count <count> \         # how many values to get in the end
+    --unique \                # if the values should be unique
+    --sort \                  # if the values should be sorted
     <value1> <value2> ...     # values to choose from
 ```
 

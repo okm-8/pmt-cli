@@ -37,8 +37,16 @@ impl choose_cli::Context for Context {
         precision: i32,
         rolls: usize,
         count: usize,
+        unique: bool,
+        sort: bool,
     ) -> Result<Vec<f64>, String> {
-        return choose::numbers(self, min, max, precision, &choose::Opts::new(rolls, count));
+        return choose::numbers(
+            self,
+            min,
+            max,
+            precision,
+            &choose::Opts::new(rolls, count, unique, sort),
+        );
     }
 
     fn indexes(
@@ -46,8 +54,14 @@ impl choose_cli::Context for Context {
         variants: Vec<String>,
         rolls: usize,
         count: usize,
+        unique: bool,
+        sort: bool,
     ) -> Result<Vec<usize>, String> {
-        return choose::indexes(self, variants, &choose::Opts::new(rolls, count));
+        return choose::indexes(
+            self,
+            variants,
+            &choose::Opts::new(rolls, count, unique, sort),
+        );
     }
 }
 
