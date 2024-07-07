@@ -8,3 +8,11 @@ mod context;
 
 pub use cli::execute;
 pub use context::Context;
+
+pub mod choose_cli {
+    pub use super::choose::Context;
+}
+
+pub mod math_cli {
+    pub use super::math::{Context, discrete_cli};
+}

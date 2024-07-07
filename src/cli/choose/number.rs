@@ -1,9 +1,8 @@
 use std::ops::DerefMut;
 use std::process::ExitCode;
 use clap::Args as ClapArgs;
-use crate::choose;
 use crate::cli::choose::scan::scan_rolls;
-use crate::cli::context::Context;
+use crate::cli::choose::Context;
 
 #[derive(ClapArgs)]
 pub struct Args {
@@ -38,16 +37,13 @@ pub struct Args {
     max: f64,
 }
 
-fn print_numbers(ctx: &dyn Context, numbers: Vec<f64>, precision: i32) -> Result<(), String> {
-    return match ctx.print(format!(
+fn print_numbers(ctx: &dyn Context, numbers: Vec<f64>, precision: i32) {
+    ctx.print(format!(
         "The numbers is {}",
         numbers.iter()
             .map(|number| format!("{:.*}", precision as usize, number)).collect::<Vec<String>>()
             .join(", ")
-    )) {
-        Ok(_) => Ok(()),
-        Err(error) => Err(error)
-    };
+    ));
 }
 
 pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
@@ -63,14 +59,11 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
     let min = args.min;
     let max = args.max;
 
-    return match choose::numbers(
-        ctx.choose_context(),
-        min,
-        max,
-        args.precision,
-        &choose::Opts::new(rolls, args.count)
-    ) {
-        Ok(numbers) => print_numbers(ctx, numbers, args.precision),
+    return match ctx.numbers(min, max, args.precision, rolls, args.count) {
+        Ok(numbers) => {
+            print_numbers(ctx, numbers, args.precision);
+            Ok(())
+        }
         Err(error) => Err(error)
     };
 }

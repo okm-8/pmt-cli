@@ -1,6 +1,5 @@
 use clap::{Subcommand as ClapSubcommand, Args as ClapArgs};
-use crate::cli::math::discrete;
-use crate::cli::context::Context;
+use crate::cli::math::{discrete, Context};
 
 #[derive(ClapSubcommand)]
 enum Subcommand {
@@ -13,8 +12,8 @@ pub struct Args {
     command: Subcommand
 }
 
-pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
+pub fn execute(ctx: &dyn Context, args: Args) -> Result<(), String> {
     return match args.command {
-        Subcommand::Discrete(args) => discrete::execute(ctx, args)
+        Subcommand::Discrete(args) => discrete::execute(ctx.discrete(), args)
     };
 }

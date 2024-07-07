@@ -5,5 +5,7 @@ mod choose;
 mod number;
 mod variant;
 mod scan;
+mod context;
 
 pub use choose::{execute, Args};
+pub use context::Context;

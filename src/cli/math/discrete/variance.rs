@@ -1,48 +1,38 @@
 use clap::Args as ClapArgs;
-use crate::cli::context::Context;
-use crate::cli::math::discrete::average;
+use crate::cli::math::discrete::{Context, AvgMethod};
 use crate::cli::math::format::format_float;
-use crate::math::discrete::{arithmetic_mean, geometric_mean, harmonic_mean, median, midrange, modes, range, variance};
 
 #[derive(ClapArgs)]
 pub struct Args {
-    #[clap(short = 'p', long = "precision", default_value = "2")]
+    #[clap(short = 'p', long = "precision", default_value = "2", help = "Precision of result")]
     precision: usize,
 
-    #[clap(short = 'm', long = "method", default_value = "arithmetic-mean")]
-    expectation_method: average::Method,
+    #[clap(
+        short = 'm',
+        long = "method",
+        default_value = "arithmetic-mean",
+        help = "Method of calculation expectation if --expectation is not set"
+    )]
+    expectation_method: AvgMethod,
 
-    #[clap(short = 'e', long = "expectation")]
+    #[clap(short = 'e', long = "expectation", help = "Expectation")]
     expectation: Option<f64>,
 
-    #[clap(short = 'q', long = "standard-deviation")]
+    #[clap(
+        short = 'q',
+        long = "standard-deviation",
+        help = "Standard deviation instead of variance"
+    )]
     standard_deviation: bool,
 
-    #[clap(required = true, num_args = 1..)]
+    #[clap(required = true, num_args = 1.., help = "Values list")]
     values: Vec<f64>
 }
 
-pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
+pub fn execute(ctx: &dyn Context, args: Args) -> Result<(), String> {
     let variance_value = match args.expectation {
-        Some(expectation) => {
-            variance(args.values.clone(), expectation)
-        }
-        None => match args.expectation_method {
-            average::Method::ArithmeticMean =>
-                variance(args.values.clone(), arithmetic_mean(args.values.clone())),
-            average::Method::GeometricMean =>
-                variance(args.values.clone(), geometric_mean(args.values.clone())),
-            average::Method::HarmonicMean =>
-                variance(args.values.clone(), harmonic_mean(args.values.clone())),
-            average::Method::Median =>
-                variance(args.values.clone(), median(args.values.clone())),
-            average::Method::Modes =>
-                variance(args.values.clone(), modes(args.values.clone())[0].clone()),
-            average::Method::Midrange =>
-                variance(args.values.clone(), midrange(args.values.clone())),
-            average::Method::Range =>
-                variance(args.values.clone(), range(args.values.clone()))
-        }
+        Some(expectation) => ctx.variance(args.values.clone(), expectation),
+        None => ctx.average(args.values.clone(), args.expectation_method)
     };
 
     let result = if args.standard_deviation {
@@ -51,8 +41,7 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
         format_float(variance_value, args.precision)
     };
 
-    return match ctx.print(result) {
-        Ok(_) => Ok(()),
-        Err(error) => Err(error)
-    };
+    ctx.print(result);
+
+    return Ok(());
 }

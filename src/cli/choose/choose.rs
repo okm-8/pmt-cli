@@ -1,8 +1,6 @@
 use std::process::ExitCode;
 use clap::{Args as ClapArgs, Subcommand as ClapSubcommand};
-use crate::cli::choose::number;
-use crate::cli::choose::variant;
-use crate::cli::context::Context;
+use crate::cli::choose::{Context, number, variant};
 
 #[derive(ClapSubcommand)]
 enum Subcommand {

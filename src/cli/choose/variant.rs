@@ -1,8 +1,7 @@
 use std::process::ExitCode;
 use clap::Args as ClapArgs;
-use crate::choose;
 use crate::cli::choose::scan::{scan_rolls, scan_variants};
-use crate::cli::context::Context;
+use crate::cli::choose::Context;
 
 #[derive(ClapArgs)]
 pub struct Args {
@@ -26,11 +25,8 @@ pub struct Args {
     variants: Vec<String>
 }
 
-fn print_variants(ctx: &dyn Context, variants: Vec<String>) -> Result<(), String> {
-    return match ctx.print(format!("The variants are {}", variants.join(", "))) {
-        Ok(_) => Ok(()),
-        Err(error) => Err(error)
-    };
+fn print_variants(ctx: &dyn Context, variants: Vec<String>) {
+    ctx.print(format!("The variants are {}", variants.join(", ")));
 }
 
 pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
@@ -53,24 +49,19 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
     }
 
     if variants.len() == 1 {
-        return match print_variants(ctx, vec![variants[0].clone(); args.count]) {
-            Ok(_) => Ok(()),
-            Err(error) => Err(error)
-        }
+        print_variants(ctx, vec![variants[0].clone(); args.count]);
+
+        return Ok(());
     }
 
-    return match choose::indexes(
-        ctx.choose_context(),
-        variants.clone(),
-        &choose::Opts::new(rolls, args.count)
-    ) {
-        Ok(indexes) => match print_variants(
-            ctx,
-            indexes.iter().map(|index| variants[*index].clone()).collect()
-        ) {
-            Ok(_) => Ok(()),
-            Err(error) => Err(error)
-        },
+    return match ctx.indexes(variants.clone(), rolls, args.count) {
+        Ok(indexes) => {
+            let result = indexes.iter()
+                .map(|index| variants[*index].clone())
+                .collect::<Vec<String>>();
+            print_variants(ctx, result);
+            Ok(())
+        }
         Err(error) => Err(error)
     };
 }
