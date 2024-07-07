@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-mod cli;
 mod choose;
-mod math;
+mod cli;
 mod context;
+mod math;
 
 pub use cli::execute;
 pub use context::Context;
@@ -14,5 +14,5 @@ pub mod choose_cli {
 }
 
 pub mod math_cli {
-    pub use super::math::{Context, discrete_cli};
+    pub use super::math::{discrete_cli, Context};
 }

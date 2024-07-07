@@ -1,6 +1,6 @@
-use clap::{Args as ClapArgs, ValueEnum};
-use crate::cli::math::discrete::{Context, AvgMethod};
+use crate::cli::math::discrete::{AvgMethod, Context};
 use crate::cli::math::format::format_float;
+use clap::{Args as ClapArgs, ValueEnum};
 
 #[derive(ClapArgs)]
 pub struct Args {
@@ -21,7 +21,7 @@ pub struct Args {
     method: AvgMethod,
 
     #[clap(required = true, help = "Values list")]
-    values: Vec<f64>
+    values: Vec<f64>,
 }
 
 pub fn execute(ctx: &dyn Context, args: Args) -> Result<(), String> {

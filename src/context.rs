@@ -58,15 +58,9 @@ impl discrete_cli::Context for Context {
 
     fn average(&self, values: Vec<f64>, method: discrete_cli::AvgMethod) -> f64 {
         return match method {
-            discrete_cli::AvgMethod::ArithmeticMean => {
-                math::discrete::arithmetic_mean(values)
-            }
-            discrete_cli::AvgMethod::GeometricMean => {
-                math::discrete::geometric_mean(values)
-            }
-            discrete_cli::AvgMethod::HarmonicMean => {
-                math::discrete::harmonic_mean(values)
-            }
+            discrete_cli::AvgMethod::ArithmeticMean => math::discrete::arithmetic_mean(values),
+            discrete_cli::AvgMethod::GeometricMean => math::discrete::geometric_mean(values),
+            discrete_cli::AvgMethod::HarmonicMean => math::discrete::harmonic_mean(values),
             discrete_cli::AvgMethod::Median => math::discrete::median(values),
             discrete_cli::AvgMethod::Midrange => math::discrete::midrange(values),
             discrete_cli::AvgMethod::Range => math::discrete::range(values),

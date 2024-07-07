@@ -6,8 +6,11 @@ build:
 clean:
 	cargo clean
 
-release: clean test build
+format:
+	cargo fmt
+
+release: clean format build
 
 TESTS ?= ""
-test:
+test: format
 	cargo test $(TESTS)

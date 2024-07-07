@@ -2,10 +2,10 @@
 #![allow(unused_imports)]
 
 mod choose;
-mod number;
-mod variant;
-mod scan;
 mod context;
+mod number;
+mod scan;
+mod variant;
 
 pub use choose::{execute, Args};
 pub use context::Context;

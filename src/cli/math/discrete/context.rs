@@ -7,7 +7,7 @@ pub enum AvgMethod {
     HarmonicMean,
     Median,
     Midrange,
-    Range
+    Range,
 }
 
 pub trait Context {

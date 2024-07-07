@@ -1,7 +1,7 @@
-use std::process::ExitCode;
-use clap::Args as ClapArgs;
 use crate::cli::choose::scan::{scan_rolls, scan_variants};
 use crate::cli::choose::Context;
+use clap::Args as ClapArgs;
+use std::process::ExitCode;
 
 #[derive(ClapArgs)]
 pub struct Args {
@@ -22,7 +22,7 @@ pub struct Args {
     count: usize,
 
     #[clap()]
-    variants: Vec<String>
+    variants: Vec<String>,
 }
 
 fn print_variants(ctx: &dyn Context, variants: Vec<String>) {
@@ -35,7 +35,7 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
     if rolls == 0 {
         rolls = match scan_rolls(ctx) {
             Ok(rolls) => rolls,
-            Err(error) => return Err(error)
+            Err(error) => return Err(error),
         };
     }
 
@@ -44,7 +44,7 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
     if variants.len() == 0 {
         variants = match scan_variants(ctx) {
             Ok(variants) => variants,
-            Err(error) => return Err(error)
+            Err(error) => return Err(error),
         };
     }
 
@@ -56,12 +56,13 @@ pub fn execute(ctx: &mut dyn Context, args: Args) -> Result<(), String> {
 
     return match ctx.indexes(variants.clone(), rolls, args.count) {
         Ok(indexes) => {
-            let result = indexes.iter()
+            let result = indexes
+                .iter()
                 .map(|index| variants[*index].clone())
                 .collect::<Vec<String>>();
             print_variants(ctx, result);
             Ok(())
         }
-        Err(error) => Err(error)
+        Err(error) => Err(error),
     };
 }

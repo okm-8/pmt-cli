@@ -59,14 +59,28 @@ pub fn modes(values: Vec<f64>) -> Vec<f64> {
 
 pub fn midrange(values: Vec<f64>) -> f64 {
     arithmetic_mean(vec![
-        values.iter().min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone(),
-        values.iter().max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap().clone()
+        values
+            .iter()
+            .min_by(|a, b| a.partial_cmp(b).unwrap())
+            .unwrap()
+            .clone(),
+        values
+            .iter()
+            .max_by(|a, b| a.partial_cmp(b).unwrap())
+            .unwrap()
+            .clone(),
     ])
 }
 
 pub fn range(values: Vec<f64>) -> f64 {
-    values.iter().max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap()
-        - values.iter().min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap()
+    values
+        .iter()
+        .max_by(|a, b| a.partial_cmp(b).unwrap())
+        .unwrap()
+        - values
+            .iter()
+            .min_by(|a, b| a.partial_cmp(b).unwrap())
+            .unwrap()
 }
 
 #[cfg(test)]

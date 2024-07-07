@@ -8,12 +8,12 @@ pub trait Context {
         max: f64,
         precision: i32,
         rolls: usize,
-        count: usize
+        count: usize,
     ) -> Result<Vec<f64>, String>;
     fn indexes(
         &mut self,
         variants: Vec<String>,
         rolls: usize,
-        count: usize
+        count: usize,
     ) -> Result<Vec<usize>, String>;
 }

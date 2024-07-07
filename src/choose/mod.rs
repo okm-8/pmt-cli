@@ -4,5 +4,5 @@
 mod choose;
 mod context;
 
-pub use context::Context;
 pub use choose::*;
+pub use context::Context;

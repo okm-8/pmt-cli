@@ -1,9 +1,9 @@
 mod choose;
+mod cli;
+mod context;
 mod math;
 mod random;
-mod cli;
 mod terminal;
-mod context;
 
 use std::process::ExitCode;
 

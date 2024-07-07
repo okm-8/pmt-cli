@@ -1,12 +1,12 @@
+use crate::choose::context::Context;
 use std::any::Any;
 use std::error::Error;
 use std::ops::Range;
-use crate::choose::context::Context;
 
 fn random_int(ctx: &mut dyn Context, range: Range<isize>) -> Result<isize, String> {
     return match ctx.random_int(range) {
         Ok(value) => Ok(value),
-        Err(error) => Err(error)
+        Err(error) => Err(error),
     };
 }
 
@@ -17,10 +17,7 @@ pub struct Opts {
 
 impl Opts {
     pub fn new(rolls: usize, count: usize) -> Self {
-        return Opts {
-            rolls,
-            count
-        };
+        return Opts { rolls, count };
     }
 
     pub fn default() -> Self {
@@ -33,7 +30,7 @@ pub fn number(
     min: f64,
     max: f64,
     precision: i32,
-    opts: &Opts
+    opts: &Opts,
 ) -> Result<f64, String> {
     if opts.count == 0 {
         return Err("Count is zero".to_string());
@@ -61,7 +58,7 @@ pub fn number(
     for _ in 0..opts.rolls {
         match random_int(ctx, 0..values_count) {
             Ok(index) => counters[index as usize] += 1,
-            Err(error) => return Err(error)
+            Err(error) => return Err(error),
         }
     }
 
@@ -80,7 +77,7 @@ pub fn numbers(
     min: f64,
     max: f64,
     precision: i32,
-    opts: &Opts
+    opts: &Opts,
 ) -> Result<Vec<f64>, String> {
     if opts.count == 0 || opts.rolls == 0 {
         return Ok(Vec::new());
@@ -95,40 +92,36 @@ pub fn numbers(
     for _ in 0..opts.count {
         match number(ctx, min, max, precision, opts) {
             Ok(value) => values.push(value),
-            Err(error) => return Err(error)
+            Err(error) => return Err(error),
         }
     }
 
     return Ok(values);
 }
 
-pub fn index<T>(
-    ctx: &mut dyn Context,
-    variants: Vec<T>,
-    opts: &Opts
-) -> Result<usize, String> {
+pub fn index<T>(ctx: &mut dyn Context, variants: Vec<T>, opts: &Opts) -> Result<usize, String> {
     return match number(ctx, 0.0, (variants.len() - 1) as f64, 0, opts) {
         Ok(index) => Ok(index as usize),
-        Err(error) => Err(error)
+        Err(error) => Err(error),
     };
 }
 
 pub fn indexes<T>(
     ctx: &mut dyn Context,
     variants: Vec<T>,
-    opts: &Opts
+    opts: &Opts,
 ) -> Result<Vec<usize>, String> {
     return match numbers(ctx, 0.0, (variants.len() - 1) as f64, 0, opts) {
         Ok(indexes) => Ok(indexes.iter().map(|index| *index as usize).collect()),
-        Err(error) => Err(error)
+        Err(error) => Err(error),
     };
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use std::collections::VecDeque;
     use std::ops::Range;
-    use super::*;
 
     struct ContextMock {
         sequence: VecDeque<isize>,
@@ -136,8 +129,8 @@ mod tests {
 
     impl ContextMock {
         fn new(sequence: Vec<isize>) -> Self {
-            return ContextMock{
-                sequence: VecDeque::from(sequence)
+            return ContextMock {
+                sequence: VecDeque::from(sequence),
             };
         }
     }
@@ -154,7 +147,7 @@ mod tests {
 
         match number(&mut context_mock, 0.0, 2.0, 0, &Opts::new(1, 1)) {
             Ok(value) => assert_eq!(value, 1.0, "expected: 1.0, got: {}", value),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 
@@ -164,7 +157,7 @@ mod tests {
 
         match number(&mut context_mock, 0.0, 2.0, 0, &Opts::new(3, 1)) {
             Ok(value) => assert_eq!(value, 2.0, "expected: 2.0, got: {}", value),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 
@@ -174,7 +167,7 @@ mod tests {
 
         match number(&mut context_mock, 0.0, 2.0, 1, &Opts::new(1, 1)) {
             Ok(value) => assert_eq!(value, 0.1, "expected: 0.1, got: {}", value),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 
@@ -189,7 +182,7 @@ mod tests {
                 "expected: [0.0, 2.0, 1.0], got: {:?}",
                 values
             ),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 
@@ -199,7 +192,7 @@ mod tests {
 
         match index(&mut context_mock, vec![0, 1, 2], &Opts::new(1, 1)) {
             Ok(index) => assert_eq!(index, 0, "expected: 0, got: {}", index),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 
@@ -214,7 +207,7 @@ mod tests {
                 "expected: [0, 2, 1], got: {:?}",
                 indexes
             ),
-            Err(error) => panic!("expected result, got: {}", error)
+            Err(error) => panic!("expected result, got: {}", error),
         }
     }
 }

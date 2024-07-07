@@ -1,10 +1,15 @@
-use clap::Args as ClapArgs;
-use crate::cli::math::discrete::{Context, AvgMethod};
+use crate::cli::math::discrete::{AvgMethod, Context};
 use crate::cli::math::format::format_float;
+use clap::Args as ClapArgs;
 
 #[derive(ClapArgs)]
 pub struct Args {
-    #[clap(short = 'p', long = "precision", default_value = "2", help = "Precision of result")]
+    #[clap(
+        short = 'p',
+        long = "precision",
+        default_value = "2",
+        help = "Precision of result"
+    )]
     precision: usize,
 
     #[clap(
@@ -26,13 +31,13 @@ pub struct Args {
     standard_deviation: bool,
 
     #[clap(required = true, num_args = 1.., help = "Values list")]
-    values: Vec<f64>
+    values: Vec<f64>,
 }
 
 pub fn execute(ctx: &dyn Context, args: Args) -> Result<(), String> {
     let variance_value = match args.expectation {
         Some(expectation) => ctx.variance(args.values.clone(), expectation),
-        None => ctx.average(args.values.clone(), args.expectation_method)
+        None => ctx.average(args.values.clone(), args.expectation_method),
     };
 
     let result = if args.standard_deviation {
